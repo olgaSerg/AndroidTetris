@@ -82,7 +82,6 @@ public class DrawingView extends View {
 
     Random random = new Random();
     int paintColor = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
-
     // TODO: вынести state в MainActivity, cделать чтобы вьюхи обращались к стейту через getContext()
     // Рисование следующей фигурки перенести в onDraw для соответствующей вьюхи (надо создать новую).
     GameState state = new GameState();
