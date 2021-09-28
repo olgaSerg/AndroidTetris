@@ -317,7 +317,7 @@ public class DrawingView extends View {
         drawPaint.setStrokeWidth(10);
 
         drawPaintShadow = new Paint();
-        drawPaintShadow.setColor(Color.GRAY);
+        drawPaintShadow.setColor(paintColor);
         drawPaintShadow.setStyle(Paint.Style.STROKE);
         drawPaintShadow.setStrokeWidth(10);
 
