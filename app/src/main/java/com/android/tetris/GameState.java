@@ -4,6 +4,8 @@ import android.graphics.Color;
 
 import java.util.Random;
 
+import static java.security.AccessController.getContext;
+
 // class Cell {
 //     int color;
 //     boolean isEmpty;
@@ -17,6 +19,7 @@ public class GameState {
     public Piece currentPiece;
     public int score = 0;
     public Piece nextPiece;
+    public int animationCellIndex;
 
     public String mode = "game"; // "pause" "game-over"
 
@@ -43,10 +46,20 @@ public class GameState {
 
     public Piece generateRandomPiece() {
         Random rnd = new Random();
-        int rndColor = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        int rndColor = colors[new Random().nextInt(colors.length)];
         Piece rndPiece = new Piece(rnd.nextInt(7), rnd.nextInt(4), rndColor);
         return rndPiece;
     }
+
+    int[] colors =  {
+            Color.parseColor("#ff4569"),
+            Color.parseColor("#33eb91"),
+            Color.parseColor("#76ff03"),
+            Color.parseColor("#33bfff"),
+            Color.parseColor("#f50057"),
+            Color.parseColor("#ffee33"),
+            Color.parseColor("#dd33fa"),
+    };
 }
 
 // C N

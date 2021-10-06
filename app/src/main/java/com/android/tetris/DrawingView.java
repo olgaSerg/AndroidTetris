@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Random;
+import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 
 //class Piece {
@@ -73,15 +75,14 @@ public class DrawingView extends View {
     //drawing path
     private Path drawPath;
     //drawing and canvas paint
-    private Paint drawPaint, drawPaintBlack, drawPaintShadow, canvasPaint;
+    private Paint drawPaint, drawPaintBlack, canvasPaint;
     //canvas
     private Canvas drawCanvas;
     //canvas bitmap
     private Bitmap canvasBitmap;
 
 
-    Random random = new Random();
-    int paintColor = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
+
     // TODO: вынести state в MainActivity, cделать чтобы вьюхи обращались к стейту через getContext()
     // Рисование следующей фигурки перенести в onDraw для соответствующей вьюхи (надо создать новую).
     GameState state = new GameState();
@@ -199,12 +200,48 @@ public class DrawingView extends View {
     }
 
     public void deleteCompletedRow(int number) {
+        deleteRowWithAnimation(number);
         for (int k = number; k >= 1; k--) {
             for (int l = 0; l < state.field[0].length; l++) {
                 state.field[k][l] = state.field[k - 1][l];
             }
         }
     }
+
+    public void deleteRowWithAnimation(final int row) {
+        state.mode = "animation";
+        ((MainActivity) getContext()).timer.cancel();
+        state.animationCellIndex = 0;
+        final Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                state.field[row][state.animationCellIndex].isEmpty = true;
+                state.field[row][state.animationCellIndex].color = Color.WHITE;
+                invalidate();
+                if (state.animationCellIndex + 1 < state.field[0].length) {
+                    state.animationCellIndex++;
+                } else {
+                    state.mode = "game";
+                    timer.cancel();
+                    ((MainActivity) getContext()).startTimer();
+                }
+            }
+        }, 50, 50);
+    }
+
+
+//        for (int i = 0; i < state.field[0].length; i++) {
+//            Timer timer = new Timer(true);
+//            timer.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    state.field[row][i].color = Color.WHITE;
+//                }
+//            }, 1000, 1000);
+//        }
+
+
 
     public void tick() {
         if (!state.mode.equals("game")) return;
@@ -251,11 +288,24 @@ public class DrawingView extends View {
         super(context, attrs);
 
         state.field = new Cell[19][10];
-        for (int i = 0; i < 19; i++) {
+        int k = 18;
+        for (int l = 0; l < 10; l++) {
+            if (l == 9) {
+                state.field[k][l] = new Cell((int) 0,true);
+            } else
+                state.field[k][l] = new Cell((int) 13369395,false);
+        }
+
+        for (int i = 0; i < 18; i++) {
             for (int j = 0; j < 10; j++) {
                 state.field[i][j] = new Cell((int) 0,true);
             }
         }
+//        for (int i = 0; i < 19; i++) {
+//            for (int j = 0; j < 10; j++) {
+//                state.field[i][j] = new Cell((int) 0,true);
+//            }
+//        }
 
         setupDrawing();
     }
@@ -289,15 +339,6 @@ public class DrawingView extends View {
                     invalidate();
 
                     ((MainActivity) getContext()).timer.cancel();
-//                    Button buttonDown = ((Activity) getContext()).findViewById(R.id.button_down);
-//                    buttonDown.setTextColor(Color.parseColor("#808080"));
-//                    buttonDown.setEnabled(false);
-//                    Button buttonLeft = ((Activity) getContext()).findViewById(R.id.button_left);
-//                    buttonLeft.setTextColor(Color.parseColor("#808080"));
-//                    buttonLeft.setEnabled(false);
-//                    Button buttonRight = ((Activity) getContext()).findViewById(R.id.button_right);
-//                    buttonRight.setTextColor(Color.parseColor("#808080"));
-//                    buttonRight.setEnabled(false);
                     state.mode = "game-over";
                 }
             });
@@ -313,16 +354,11 @@ public class DrawingView extends View {
 //get drawing area setup for interaction
         drawPath = new Path();
         drawPaint = new Paint();
-        drawPaint.setColor(paintColor);
+        drawPaint.setColor(Color.GRAY);
         drawPaint.setStrokeWidth(10);
 
-        drawPaintShadow = new Paint();
-        drawPaintShadow.setColor(paintColor);
-        drawPaintShadow.setStyle(Paint.Style.STROKE);
-        drawPaintShadow.setStrokeWidth(10);
-
         drawPaintBlack = new Paint();
-        drawPaintBlack.setColor(Color.BLACK);
+        drawPaintBlack.setColor(Color.GRAY);
     }
 
     @Override
@@ -351,9 +387,12 @@ public class DrawingView extends View {
         );
     }
 
-    void drawCellShadow(int row, int column, Canvas canvas) {
+    void drawCellShadow(int row, int column, int color, Canvas canvas) {
         int marginSize = 3;
-        int margin2Size = 13;
+        Paint drawPaintShadow = new Paint();
+        drawPaintShadow.setColor(color);
+        drawPaintShadow.setStyle(Paint.Style.STROKE);
+        drawPaintShadow.setStrokeWidth(10);
         canvas.drawRect(
                 column * 100 + marginSize, row * 100 + marginSize,
                 (column + 1) * 100 - marginSize - 1, (row + 1) * 100 - marginSize - 1,
@@ -392,7 +431,7 @@ public class DrawingView extends View {
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[0].length; j++) {
                 if (piece[i][j] == 1) {
-                    drawCellShadow(i + state.currentPieceRow + shadowShift, j + state.currentPieceColumn, canvas);
+                    drawCellShadow(i + state.currentPieceRow + shadowShift, j + state.currentPieceColumn, state.currentPiece.getColor(), canvas);
                 }
             }
         }

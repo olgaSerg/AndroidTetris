@@ -32,6 +32,16 @@ public class Piece {
         return pieces[pieceType][rotationIndex];
     }
 
+    int[] colors =  {
+            Color.parseColor("#ff1744"),
+            Color.parseColor("#ff3d00"),
+            Color.parseColor("#ffea00"),
+            Color.parseColor("#00e676"),
+            Color.parseColor("#00b0ff"),
+            Color.parseColor("#2a3eb1"),
+            Color.parseColor("#ff3d00"),
+    };
+
     // 0 - T
     // 1 - L
     // 2 - O
