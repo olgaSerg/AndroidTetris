@@ -19,7 +19,9 @@ public class GameState {
     public Piece currentPiece;
     public int score = 0;
     public Piece nextPiece;
-    public int animationCellIndex;
+    public int animationIndex;
+    public int[] completedRows = new int[20];
+
 
     public String mode = "game"; // "pause" "game-over"
 
@@ -60,6 +62,7 @@ public class GameState {
             Color.parseColor("#ffee33"),
             Color.parseColor("#dd33fa"),
     };
+
 }
 
 // C N

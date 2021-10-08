@@ -7,17 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 
 //class Piece {
@@ -94,7 +91,6 @@ public class DrawingView extends View {
             state.currentPieceColumn += 1;
             invalidate();
         }
-        ;
     }
 
     public void clickLeft() {
@@ -103,7 +99,6 @@ public class DrawingView extends View {
             state.currentPieceColumn -= 1;
             invalidate();
         }
-        ;
     }
 
     public void clickDown() {
@@ -138,7 +133,7 @@ public class DrawingView extends View {
                         state.field[i + state.currentPieceRow][j + state.currentPieceColumn].color = state.currentPiece.getColor();
                     }
                 }
-            }
+            } rememberCompletedRowsAndStartAnimation();
             return true;
         }
         return false;
@@ -147,8 +142,9 @@ public class DrawingView extends View {
 //        paintColor = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
 
 
-    public void deleteCompletedRows() {
+    public void rememberCompletedRowsAndStartAnimation() {
         int completedRowsCount = 0;
+        int completedRowIndex = 0;
         for (int i = 0; i < state.field.length; i++) {
             int length = 0;
             for (int j = 0; j < state.field[0].length; j++) {
@@ -157,11 +153,12 @@ public class DrawingView extends View {
                 }
                 if (length == state.field[0].length) {
                     completedRowsCount++;
-                    deleteCompletedRow(i);
+                    state.completedRows[completedRowIndex] = i;
+                    completedRowIndex++;
                 }
             }
         }
-
+        deleteRowsWithAnimation();
         if (completedRowsCount > 0) {
             updateScore(completedRowsCount);
         }
@@ -199,33 +196,39 @@ public class DrawingView extends View {
         state.score += bonus;
     }
 
-    public void deleteCompletedRow(int number) {
-        deleteRowWithAnimation(number);
-        for (int k = number; k >= 1; k--) {
-            for (int l = 0; l < state.field[0].length; l++) {
-                state.field[k][l] = state.field[k - 1][l];
+    public void deleteCompletedRows() {
+        for (int i = 0; i < state.completedRows.length; i++) {
+            for (int k = state.completedRows[i]; k >= 1; k--) {
+                for (int l = 0; l < state.field[0].length; l++) {
+                    state.field[k][l] = state.field[k - 1][l];
+                }
             }
         }
     }
 
-    public void deleteRowWithAnimation(final int row) {
+    public void deleteRowsWithAnimation() {
         state.mode = "animation";
         ((MainActivity) getContext()).timer.cancel();
-        state.animationCellIndex = 0;
+        state.animationIndex = 0;
         final Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                state.field[row][state.animationCellIndex].isEmpty = true;
-                state.field[row][state.animationCellIndex].color = Color.WHITE;
-                invalidate();
-                if (state.animationCellIndex + 1 < state.field[0].length) {
-                    state.animationCellIndex++;
-                } else {
+                if (state.animationIndex > 5) {
                     state.mode = "game";
                     timer.cancel();
                     ((MainActivity) getContext()).startTimer();
+                    deleteCompletedRows();
+                    return;
                 }
+                for (int index = 0; index < state.completedRows.length; index++) {
+                    state.field[state.completedRows[index]][5 - state.animationIndex].isEmpty = true;
+                    state.field[state.completedRows[index]][5 - state.animationIndex].color = Color.WHITE;
+                    state.field[state.completedRows[index]][4 + state.animationIndex].isEmpty = true;
+                    state.field[state.completedRows[index]][4 + state.animationIndex].color = Color.WHITE;
+                }
+                invalidate();
+                state.animationIndex++;
             }
         }, 50, 50);
     }
@@ -247,8 +250,7 @@ public class DrawingView extends View {
         if (!state.mode.equals("game")) return;
         moveDown();
         boolean landed = putDown();
-        deleteCompletedRows();
-        checkGameOver();
+//        checkGameOver();
         if (landed) {
             state.switchToNextPiece();
         }
@@ -263,6 +265,7 @@ public class DrawingView extends View {
             ((MainActivity) getContext()).timer.cancel();
             Button btnPause = ((MainActivity) getContext()).findViewById(R.id.button_pause);
             btnPause.setText("Continue");
+            btnPause.setTextSize(11);
             ((MainActivity) getContext()).music.pause();
         } else {
             isPaused = false;
@@ -287,25 +290,42 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        state.field = new Cell[19][10];
-        int k = 18;
-        for (int l = 0; l < 10; l++) {
-            if (l == 9) {
-                state.field[k][l] = new Cell((int) 0,true);
-            } else
-                state.field[k][l] = new Cell((int) 13369395,false);
-        }
-
-        for (int i = 0; i < 18; i++) {
-            for (int j = 0; j < 10; j++) {
-                state.field[i][j] = new Cell((int) 0,true);
-            }
-        }
+        state.field = new Cell[16][10];
 //        for (int i = 0; i < 19; i++) {
 //            for (int j = 0; j < 10; j++) {
 //                state.field[i][j] = new Cell((int) 0,true);
 //            }
 //        }
+//        int k = 15;
+//            for (int l = 0; l < 10; l++) {
+//                if (l == 9) {
+//                    state.field[k][l] = new Cell((int) 0, true);
+//                } else
+//                    state.field[k][l] = new Cell((int) 13369395, false);
+//            }
+//        k = 16;
+//        for (int l = 0; l < 10; l++) {
+//            if (l == 9) {
+//                state.field[k][l] = new Cell((int) 0, true);
+//            } else
+//                state.field[k][l] = new Cell((int) 13369395, false);
+//        }
+
+//        for (int k = 15; k < 17; k++) {
+//            for (int l = 0; l < 10; l++) {
+//                if (l == 9) {
+//                    state.field[k][l] = new Cell((int) 0, true);
+//                } else
+//                    state.field[k][l] = new Cell((int) 13369395, false);
+//            }
+//        }
+
+
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 10; j++) {
+                state.field[i][j] = new Cell((int) 0,true);
+            }
+        }
 
         setupDrawing();
     }
@@ -323,27 +343,21 @@ public class DrawingView extends View {
     }
 
 
-    public void checkGameOver() {
-        if (!canPut(0, 4)) {
-            ((Activity) getContext()).runOnUiThread(new Runnable() {
-                public void run() {
-                    View view = ((Activity) getContext()).findViewById(R.id.game_over_view);
-//                    int visibility = view.getVisibility();
-//                    if (visibility == View.VISIBLE) {
-//                        visibility = View.INVISIBLE;
-//                    } else {
-//                        visibility = View.VISIBLE;
-//                    }
-
-                    view.setVisibility(View.VISIBLE);
-                    invalidate();
-
-                    ((MainActivity) getContext()).timer.cancel();
-                    state.mode = "game-over";
-                }
-            });
-        }
-    }
+//    public void checkGameOver() {
+//        if (!canPut(0, 4)) {
+//            ((Activity) getContext()).runOnUiThread(new Runnable() {
+//                public void run() {
+//                    View view = ((Activity) getContext()).findViewById(R.id.game_over_view);
+//
+//                    view.setVisibility(View.VISIBLE);
+//                    invalidate();
+//
+//                    ((MainActivity) getContext()).timer.cancel();
+//                    state.mode = "game-over";
+//                }
+//            });
+//        }
+//    }
 
 
     boolean isOnField(int row, int column) {
