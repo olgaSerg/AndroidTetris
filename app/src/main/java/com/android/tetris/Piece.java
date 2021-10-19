@@ -9,7 +9,7 @@ public class Piece {
     private int rotationIndex;
     private int color;
 
-    public Piece (int pieceType, int rotationIndex, int color) {
+    public Piece(int pieceType, int rotationIndex, int color) {
         this.pieceType = pieceType;
         this.rotationIndex = rotationIndex;
         this.color = color;

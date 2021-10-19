@@ -1,6 +1,11 @@
 package com.android.tetris;
 
-public class Field {
-    int field;
-    Cell[][] gameField;
-}
+import android.graphics.Canvas;
+
+//public class Field {
+//    Cell[][] field;
+//    boolean isOnField(Position position) {}
+//    boolean canPut(Piece piece) {}
+//    boolean isRowEmpty() {}
+//    void draw(Canvas canvas) {}
+//}

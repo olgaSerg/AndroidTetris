@@ -15,61 +15,46 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Handler;
 
+import static java.security.AccessController.getContext;
+
 public class MainActivity extends AppCompatActivity {
 
-   public Timer timer;
-   MediaPlayer music;
+
+   public Game game;
+   public static Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        music = MediaPlayer.create(MainActivity.this, R.raw.tetris);
-        music.start();
-        startTimer();
-
-
-//        timer.cancel();
-
-
-    }
-    public void startTimer() {
-        final DrawingView drawView = findViewById(R.id.drawing);
-        timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                drawView.tick();
-            }
-        }, 1000, 1000);
+        appContext = this;
+        DrawingView drawingView = findViewById(R.id.drawing);
+        game = new Game(appContext, drawingView);
+        game.start();
     }
 
 
-        public void onClickRight(View view) {
-            DrawingView drawView = findViewById(R.id.drawing);
-            drawView.clickRight();
+        public void clickRight(View view) {
+            game.clickRight();
         }
 
-        public void onClickLeft(View view) {
-            DrawingView drawView = findViewById(R.id.drawing);
-            drawView.clickLeft();
+        public void clickLeft(View view) {
+            game.clickLeft();
         }
 
-        public void onClickDown(View view) {
-            DrawingView drawView = findViewById(R.id.drawing);
-            drawView.clickDown();
+        public void clickDown(View view) {
+            game.clickDown();
         }
 
-        public void onClickRotation(View view) {
-            DrawingView drawView = findViewById(R.id.drawing);
-            drawView.clickRotation();
+        public void clickRotation(View view) {
+            game.clickRotation();
         }
 
-    public void onClickPause(View view) {
-        DrawingView drawView = findViewById(R.id.drawing);
-        drawView.clickPause();
-    }
+        public void clickPause(View view) {
+            game.clickPause();
+        }
+
+
 }
 

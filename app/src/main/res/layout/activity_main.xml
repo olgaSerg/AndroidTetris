@@ -43,7 +43,7 @@
                 android:id="@+id/imageButton"
                 android:layout_width="78dp"
                 android:layout_height="70dp"
-                android:onClick="onClickRotation"
+                android:onClick="clickRotation"
                 android:background="@drawable/rotate"
                 />
 
@@ -51,14 +51,14 @@
                 android:id="@+id/button_left"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="onClickLeft"
+                android:onClick="clickLeft"
                 android:background="@drawable/left" />
 
             <ImageButton
                 android:id="@+id/button_down"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="onClickDown"
+                android:onClick="clickDown"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/down" />
 
@@ -66,7 +66,7 @@
                 android:id="@+id/button_right"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="onClickRight"
+                android:onClick="clickRight"
                 android:background="@drawable/right" />
 
 
@@ -101,7 +101,7 @@
             android:id="@+id/button_pause"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:onClick="onClickPause"
+            android:onClick="clickPause"
             android:text="Pause"
             />
     </TableLayout>

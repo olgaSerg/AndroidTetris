@@ -4,8 +4,6 @@ import android.graphics.Color;
 
 import java.util.Random;
 
-import static java.security.AccessController.getContext;
-
 // class Cell {
 //     int color;
 //     boolean isEmpty;
@@ -13,7 +11,7 @@ import static java.security.AccessController.getContext;
 
 public class GameState {
 //    public int[][] field;
-    public Cell[][] field;
+    Cell[][] field;
     public int currentPieceRow;
     public int currentPieceColumn;
     public Piece currentPiece;
