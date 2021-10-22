@@ -37,10 +37,9 @@ class Game {
             }
         }
 
-
-        for (int j = 1; j < 10; j++) {
-                state.field[15][j] = new Cell((int) 0,false);
-        }
+//        for (int j = 1; j < 10; j++) {
+//                state.field[15][j] = new Cell((int) 0,false);
+//        }
 
     }
 
