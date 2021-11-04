@@ -20,9 +20,9 @@ public class Position {
 //
 //    Position shiftRight() {}
 //    Position shiftUp() {}
-    public Position shiftDown() {
-        return new Position(row - 1, column);
-    }
+//    public Position shiftDown() {
+//        return new Position(row - 1, column);
+//    }
 //
 }
 
