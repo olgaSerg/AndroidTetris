@@ -11,45 +11,52 @@ import java.util.Random;
 
 public class GameState {
 //    public int[][] field;
-    Cell[][] field;
-    public int currentPieceRow;
-    public int currentPieceColumn;
-    public Piece currentPiece;
+    public Field field;
     public int score = 0;
+    public Piece piece;
     public Piece nextPiece;
     public int animationIndex;
     public int[] completedRows = new int[20];
 
 
+
     public String mode = "game"; // "pause" "game-over"
 
     public GameState() {
+        this.field = new Field();
         initializePieces();
     }
 
-    public void resetCurrentPieceLocation() {
-        currentPieceRow = 0;
-        currentPieceColumn = 4;
-    }
+//    public void resetCurrentPieceLocation() {
+//        currentPieceRow = 0;
+//        currentPieceColumn = 4;
+//    }
 
     public void initializePieces() {
-        currentPiece = generateRandomPiece();
+        piece = generateRandomPiece();
+//        currentPiece = generateRandomPiece();
         nextPiece = generateRandomPiece();
-        resetCurrentPieceLocation();
+//        resetCurrentPieceLocation();
     }
 
     public void switchToNextPiece() {
-        currentPiece = nextPiece;
+        piece = nextPiece;
         nextPiece = generateRandomPiece();
-        resetCurrentPieceLocation();
+//        resetCurrentPieceLocation();
     }
 
     public Piece generateRandomPiece() {
         Random rnd = new Random();
         int rndColor = colors[new Random().nextInt(colors.length)];
-        Piece rndPiece = new Piece(rnd.nextInt(7), rnd.nextInt(4), rndColor);
+        Piece rndPiece = new Piece(new PieceShape(rnd.nextInt(7), rnd.nextInt(4), rndColor), new Position(0,4));
         return rndPiece;
     }
+//    public PieceOld generateRandomPiece() {
+//        Random rnd = new Random();
+//        int rndColor = colors[new Random().nextInt(colors.length)];
+//        PieceOld rndPiece = new PieceOld(rnd.nextInt(7), rnd.nextInt(4), rndColor);
+//        return rndPiece;
+//    }
 
     int[] colors =  {
             Color.parseColor("#ff4569"),

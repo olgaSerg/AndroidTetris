@@ -1,32 +1,46 @@
 package com.android.tetris;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
 
-public class PieceShape {
+import java.util.Random;
+
+public class PieceOld {
     private int pieceType;
     private int rotationIndex;
-    int color;
+    private int color;
 
-    PieceShape(int pieceType, int rotationIndex, int color) {
-        this.color = color;
+    public PieceOld(int pieceType, int rotationIndex, int color) {
         this.pieceType = pieceType;
         this.rotationIndex = rotationIndex;
+        this.color = color;
     }
 
+    public int getPieceType() {return pieceType;}
+    public int getRotationIndex() {return rotationIndex;}
     public int getColor() {return color;}
 
-    public PieceShape rotate() {
+
+    public void rotate() {
         if (rotationIndex == 3) {
             rotationIndex = 0;
         } else {
             rotationIndex++;
         }
-        return new PieceShape(pieceType, rotationIndex, color);
     }
 
-//    void draw(int shiftX, int shiftY, Canvas canvas) {} ??
-//    void draw(Canvas canvas) {}
+    public int[][] getArray() {
+        return pieces[pieceType][rotationIndex];
+    }
+
+    int[] colors =  {
+            Color.parseColor("#ff1744"),
+            Color.parseColor("#ff3d00"),
+            Color.parseColor("#ffea00"),
+            Color.parseColor("#00e676"),
+            Color.parseColor("#00b0ff"),
+            Color.parseColor("#2a3eb1"),
+            Color.parseColor("#ff3d00"),
+    };
 
     // 0 - T
     // 1 - L
@@ -35,20 +49,6 @@ public class PieceShape {
     // 4 - I
     // 5 - Z
     // 6 - S
-
-    int[] colors =  {
-        Color.parseColor("#ff1744"),
-        Color.parseColor("#ff3d00"),
-        Color.parseColor("#ffea00"),
-        Color.parseColor("#00e676"),
-        Color.parseColor("#00b0ff"),
-        Color.parseColor("#2a3eb1"),
-        Color.parseColor("#ff3d00"),
-    };
-
-    public int[][] getArray() {
-            return pieces[pieceType][rotationIndex];
-    }
 
     int[][][][] pieces = {
             {

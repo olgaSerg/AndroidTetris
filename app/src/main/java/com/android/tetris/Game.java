@@ -29,13 +29,6 @@ class Game {
         this.context = context;
         this.state = new GameState();
         this.drawingView = drawingView;
-        state.field = new Cell[16][10];
-
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 10; j++) {
-                state.field[i][j] = new Cell((int) 0,true);
-            }
-        }
 
 //        for (int j = 1; j < 10; j++) {
 //                state.field[15][j] = new Cell((int) 0,false);
@@ -64,32 +57,32 @@ class Game {
     }
 
     public void clickLeft() {
-        if (canPut(state.currentPieceRow, state.currentPieceColumn - 1)) {
-            state.currentPieceColumn -= 1;
+        if (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row, state.piece.position.column - 1)))) {
+            state.piece.position.column -= 1;
         }
         redraw();
     }
 
     public void clickRight() {
         if (!state.mode.equals("game")) return;
-        if (canPut(state.currentPieceRow, state.currentPieceColumn + 1)) {
-            state.currentPieceColumn += 1;
+        if (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row, state.piece.position.column + 1)))) {
+            state.piece.position.column += 1;
         }
         redraw();
     }
 
     public void clickDown() {
         if (!state.mode.equals("game")) return;
-        for (int i = 0; i < state.field.length; i++) {
-            if (canPut(state.currentPieceRow + 1, state.currentPieceColumn)) {
-                state.currentPieceRow += 1;
+        for (int i = 0; i < state.field.cells.length; i++) {
+            if (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row + 1, state.piece.position.column)))) {
+                state.piece.position.row += 1;
             }
         }
         redraw();
     }
 
     public void clickRotation() {
-        state.currentPiece.rotate();
+        state.piece.rotate();
         redraw();
     }
 
@@ -141,10 +134,10 @@ class Game {
                     return;
                 }
                 for (int index = 0; index < state.completedRows.length; index++) {
-                    state.field[state.completedRows[index]][5 - state.animationIndex].isEmpty = true;
-                    state.field[state.completedRows[index]][5 - state.animationIndex].color = Color.WHITE;
-                    state.field[state.completedRows[index]][4 + state.animationIndex].isEmpty = true;
-                    state.field[state.completedRows[index]][4 + state.animationIndex].color = Color.WHITE;
+                    state.field.cells[state.completedRows[index]][5 - state.animationIndex].isEmpty = true;
+                    state.field.cells[state.completedRows[index]][5 - state.animationIndex].color = Color.WHITE;
+                    state.field.cells[state.completedRows[index]][4 + state.animationIndex].isEmpty = true;
+                    state.field.cells[state.completedRows[index]][4 + state.animationIndex].color = Color.WHITE;
                 }
                 redraw();
                 state.animationIndex++;
@@ -153,38 +146,39 @@ class Game {
     }
 
     private void moveDown() {
-        if (canPut(state.currentPieceRow + 1, state.currentPieceColumn)) {
-            state.currentPieceRow += 1;
+        if (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row + 1, state.piece.position.column)))) {
+            state.piece.position.row += 1;
         }
     }
 
-    public boolean canPut(int row, int column) {
-        int[][] piece = state.currentPiece.getArray();
-        for (int i = 0; i < piece.length; i++) {
-            for (int j = 0; j < piece[0].length; j++) {
-                if (piece[i][j] == 1 && (!isOnField(i + row, j + column) || !state.field[i + row][j + column].isEmpty)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+//    public boolean canPut(int row, int column) {
+//        int[][] piece = state.piece.shape.getArray();
+//        for (int i = 0; i < piece.length; i++) {
+//            for (int j = 0; j < piece[0].length; j++) {
+//                if (piece[i][j] == 1 && (!isOnField(i + row, j + column) || !state.field.cells[i + row][j + column].isEmpty)) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
 
     private boolean isOnField(int row, int column) {
-        return row < state.field.length && row >= 0 && column < state.field[0].length && column >= 0;
+        return row < state.field.cells.length && row >= 0 && column < state.field.cells[0].length && column >= 0;
     }
 
     private boolean putDown() {
-        int[][] piece = state.currentPiece.getArray();
-        if (!canPut(state.currentPieceRow + 1, state.currentPieceColumn)) {
+        int[][] piece = state.piece.shape.getArray();
+        if (!state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row + 1, state.piece.position.column)))) {
             for (int i = 0; i < piece.length; i++) {
                 for (int j = 0; j < piece[0].length; j++) {
                     if (piece[i][j] == 1) {
-                        state.field[i + state.currentPieceRow][j + state.currentPieceColumn].isEmpty = false;
-                        state.field[i + state.currentPieceRow][j + state.currentPieceColumn].color = state.currentPiece.getColor();
+                        state.field.cells[i + state.piece.position.row][j + state.piece.position.column].isEmpty = false;
+                        state.field.cells[i + state.piece.position.row][j + state.piece.position.column].color = state.piece.shape.getColor();
                     }
                 }
-            } rememberCompletedRowsAndStartAnimation();
+            }
+            rememberCompletedRowsAndStartAnimation();
             return true;
         }
         return false;
@@ -196,13 +190,13 @@ class Game {
     private void rememberCompletedRowsAndStartAnimation() {
         int completedRowsCount = 0;
         int completedRowIndex = 0;
-        for (int i = 0; i < state.field.length; i++) {
+        for (int i = 0; i < state.field.cells.length; i++) {
             int length = 0;
-            for (int j = 0; j < state.field[0].length; j++) {
-                if (!state.field[i][j].isEmpty) {
+            for (int j = 0; j < state.field.cells[0].length; j++) {
+                if (!state.field.cells[i][j].isEmpty) {
                     length++;
                 }
-                if (length == state.field[0].length) {
+                if (length == state.field.cells[0].length) {
                     completedRowsCount++;
                     state.completedRows[completedRowIndex] = i;
                     completedRowIndex++;
@@ -250,8 +244,8 @@ class Game {
     private void deleteCompletedRows() {
         for (int i = 0; i < state.completedRows.length; i++) {
             for (int k = state.completedRows[i]; k >= 1; k--) {
-                for (int l = 0; l < state.field[0].length; l++) {
-                    state.field[k][l] = state.field[k - 1][l];
+                for (int l = 0; l < state.field.cells[0].length; l++) {
+                    state.field.cells[k][l] = state.field.cells[k - 1][l];
                 }
             }
         }
@@ -285,11 +279,11 @@ class Game {
     }
 
     void drawCurrentPiece(Canvas canvas) {
-        int[][] piece = state.currentPiece.getArray();
+        int[][] piece = state.piece.shape.getArray();
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[0].length; j++) {
                 if (piece[i][j] == 1) {
-                    drawCell(i + state.currentPieceRow, j + state.currentPieceColumn, state.currentPiece.getColor(), canvas);
+                    drawCell(i + state.piece.position.row, j + state.piece.position.column, state.piece.shape.getColor(), canvas);
                 }
             }
         }
@@ -297,14 +291,14 @@ class Game {
 
     void drawCurrentPieceShadow(Canvas canvas) {
         int shadowShift = 0;
-        while (canPut(state.currentPieceRow + shadowShift + 1, state.currentPieceColumn)) {
+        while (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row + shadowShift + 1, state.piece.position.column)))) {
             shadowShift += 1;
         }
-        int[][] piece = state.currentPiece.getArray();
+        int[][] piece = state.piece.shape.getArray();
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[0].length; j++) {
                 if (piece[i][j] == 1) {
-                    drawCellShadow(i + state.currentPieceRow + shadowShift, j + state.currentPieceColumn, state.currentPiece.getColor(), canvas);
+                    drawCellShadow(i + state.piece.position.row + shadowShift, j + state.piece.position.column, state.piece.shape.getColor(), canvas);
                 }
             }
         }
@@ -346,25 +340,21 @@ class Game {
 
 
     void drawPiece(Piece piece, Canvas canvas) {
-        int[][] pieceArray = piece.getArray();
+        int[][] pieceArray = piece.shape.getArray();
         for (int i = 0; i < pieceArray.length; i++) {
             for (int j = 0; j < pieceArray[0].length; j++) {
                 if (pieceArray[i][j] == 1) {
-                    drawCell(i, j, piece.getColor(), canvas);
+                    drawCell(i, j, piece.shape.getColor(), canvas);
                 }
             }
         }
     }
 
-
-
-
-
     void drawField(Canvas canvas) {
-        for (int i = 0; i < state.field.length; i++) {
-            for (int j = 0; j < state.field[0].length; j++) {
-                if (!state.field[i][j].isEmpty) {
-                    drawCell(i, j, state.field[i][j].color, canvas);
+        for (int i = 0; i < state.field.cells.length; i++) {
+            for (int j = 0; j < state.field.cells[0].length; j++) {
+                if (!state.field.cells[i][j].isEmpty) {
+                    drawCell(i, j, state.field.cells[i][j].color, canvas);
                 }
             }
         }

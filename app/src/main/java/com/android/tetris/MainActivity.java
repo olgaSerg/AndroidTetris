@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         appContext = this;
         DrawingView drawingView = findViewById(R.id.drawing);
         game = new Game(appContext, drawingView);
+
         game.start();
     }
 
