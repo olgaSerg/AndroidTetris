@@ -11,9 +11,15 @@ public class Field {
             }
         }
     }
+
+    public Piece dropPiece(Piece piece) {
+        return piece;
+    }
+
     public boolean isOnField(Position position) {
         return position.row < cells.length && position.row >= 0 && position.column < cells[0].length && position.column >= 0;
     }
+
     public boolean canPut(Piece piece) {
         int[][] curPiece = piece.shape.getArray();
         for (int i = 0; i < curPiece.length; i++) {
@@ -25,6 +31,7 @@ public class Field {
         }
         return true;
     }
+
 //    boolean isRowEmpty() {}
 //    void draw(Canvas canvas) {}
 }

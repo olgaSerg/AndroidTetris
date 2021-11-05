@@ -78,10 +78,10 @@ public class DrawingView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//view given size
-//        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-//        canvasBitmap.eraseColor(Color.WHITE);
-//        drawCanvas = new Canvas(canvasBitmap);
+//      view given size
+//      canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+//      canvasBitmap.eraseColor(Color.WHITE);
+//      drawCanvas = new Canvas(canvasBitmap);
     }
 
     @Override

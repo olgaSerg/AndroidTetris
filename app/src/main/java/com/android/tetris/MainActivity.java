@@ -36,26 +36,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        public void clickRight(View view) {
-            game.clickRight();
-        }
+    public void clickRight(View view) { game.clickRight(); }
 
-        public void clickLeft(View view) {
-            game.clickLeft();
-        }
+    public void clickLeft(View view) {
+        game.clickLeft();
+    }
 
-        public void clickDown(View view) {
-            game.clickDown();
-        }
+    public void clickDown(View view) {
+        game.clickDown();
+    }
 
-        public void clickRotation(View view) {
-            game.clickRotation();
-        }
+    public void clickRotation(View view) {
+        game.clickRotation();
+    }
 
-        public void clickPause(View view) {
+    public void clickPause(View view) {
             game.clickPause();
         }
-
-
 }
 

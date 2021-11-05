@@ -1,6 +1,4 @@
 package com.android.tetris;
-
-import android.graphics.Canvas;
 import android.graphics.Color;
 
 public class PieceShape {
