@@ -32,7 +32,7 @@ public class Piece {
     Piece shiftDown() {
         return shiftBy(1, 0);
     }
-//    Piece shiftUp() {}
+//    Piece shiftUp() {} чдч
 }
 
 
