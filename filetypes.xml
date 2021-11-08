@@ -1,0 +1,10 @@
+<application>
+  <component name="FileTypeManager" version="17">
+    <extensionMap>
+      <mapping pattern="dog" type="Image" />
+      <mapping pattern="shopping_list_db" type="PLAIN_TEXT" />
+      <mapping pattern="jhkg" type="PLAIN_TEXT" />
+      <mapping pattern="menu_list" type="XML" />
+    </extensionMap>
+  </component>
+</application>
