@@ -105,15 +105,15 @@ class Game {
     }
 
     private void tick() {
-        if (!state.mode.equals("game")) return;
-        moveDown();
         checkGameOver();
+        if (!state.mode.equals("game")) return;
         boolean landed = putDown();
         if (landed) {
             state.switchToNextPiece();
         }
         displayScore();
-        drawingView.invalidate();
+        moveDown();
+        redraw();
     }
 
     private void deleteRowsWithAnimation() {
@@ -231,19 +231,15 @@ class Game {
         }
     }
 
-
     public void checkGameOver() {
         if (!state.field.canPut(state.piece)) {
+            state.mode = "game-over";
             ((Activity) context).runOnUiThread(new Runnable() {
                 public void run() {
-                    View view = ((Activity) context).findViewById(R.id.game_over_view);
-
-                    view.setVisibility(View.VISIBLE);
-                    redraw();
-
-                    timer.cancel();
-                    music.stop();
-                    state.mode = "game-over";
+                View view = ((Activity) context).findViewById(R.id.game_over_view);
+                view.setVisibility(View.VISIBLE);
+                music.stop();
+                redraw();
                 }
             });
         }

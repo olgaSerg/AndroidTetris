@@ -1,6 +1,5 @@
 package com.android.tetris;
 
-
 public class Piece {
     PieceShape shape;
     Position position;
@@ -16,7 +15,7 @@ public class Piece {
 
 //    void draw(Canvas canvas) {}
 //    PieceShadow getShadow(field) {}
-//
+
     Piece shiftBy(int rowShift, int columnShift) {
         return new Piece(shape, position.shiftBy(rowShift, columnShift));
     }
@@ -32,7 +31,6 @@ public class Piece {
     Piece shiftDown() {
         return shiftBy(1, 0);
     }
-//    Piece shiftUp() {} чдч
 }
 
 

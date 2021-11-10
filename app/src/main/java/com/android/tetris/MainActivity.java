@@ -2,20 +2,9 @@ package com.android.tetris;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Handler;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 

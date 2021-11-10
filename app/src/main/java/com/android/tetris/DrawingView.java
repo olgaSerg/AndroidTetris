@@ -88,7 +88,6 @@ public class DrawingView extends View {
     protected void onDraw(Canvas canvas) {
         // change scale for different display size
         canvas.scale(0.8f, 0.8f);
-
         ((MainActivity) getContext()).game.draw(canvas);
     }
 }

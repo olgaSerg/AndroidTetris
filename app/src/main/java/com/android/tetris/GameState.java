@@ -10,7 +10,6 @@ import java.util.Random;
 // }
 
 public class GameState {
-//    public int[][] field;
     public Field field;
     public int score = 0;
     public Piece piece;
@@ -34,7 +33,6 @@ public class GameState {
 
     public void initializePieces() {
         piece = generateRandomPiece();
-//        currentPiece = generateRandomPiece();
         nextPiece = generateRandomPiece();
 //        resetCurrentPieceLocation();
     }
@@ -51,12 +49,6 @@ public class GameState {
         Piece rndPiece = new Piece(new PieceShape(rnd.nextInt(7), rnd.nextInt(4), rndColor), new Position(0,4));
         return rndPiece;
     }
-//    public PieceOld generateRandomPiece() {
-//        Random rnd = new Random();
-//        int rndColor = colors[new Random().nextInt(colors.length)];
-//        PieceOld rndPiece = new PieceOld(rnd.nextInt(7), rnd.nextInt(4), rndColor);
-//        return rndPiece;
-//    }
 
     int[] colors =  {
             Color.parseColor("#ff4569"),
@@ -70,7 +62,5 @@ public class GameState {
 
 }
 
-// C N
-// J T L O Z Z T S
 
 
