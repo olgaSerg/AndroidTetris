@@ -1,4 +1,5 @@
 package com.android.tetris;
+import android.graphics.Canvas;
 import android.graphics.Color;
 
 public class PieceShape {
@@ -23,8 +24,21 @@ public class PieceShape {
         return new PieceShape(pieceType, rotationIndex, color);
     }
 
-//    void draw(int shiftX, int shiftY, Canvas canvas) {} ??
-//    void draw(Canvas canvas) {}
+    void draw(int rowShift, int columnShift, Canvas canvas) {
+        Cell cell = new Cell(color, false);
+        int[][] piece = getArray();
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[0].length; j++) {
+                if (piece[i][j] == 1) {
+                    cell.draw(new Position(i + rowShift, j + columnShift), canvas);
+                }
+            }
+        }
+    }
+
+    void draw(Canvas canvas) {
+        draw(0, 0, canvas);
+    }
 
     // 0 - T
     // 1 - L
@@ -103,27 +117,27 @@ public class PieceShape {
             },
             {
                     {
-                            {0, 0, 0, 0},
                             {1, 1, 0, 0},
                             {1, 1, 0, 0},
                             {0, 0, 0, 0},
-                    },
-                    {
-                            {0, 0, 0, 0},
-                            {1, 1, 0, 0},
-                            {1, 1, 0, 0},
                             {0, 0, 0, 0},
                     },
                     {
+                            {1, 1, 0, 0},
+                            {1, 1, 0, 0},
                             {0, 0, 0, 0},
-                            {1, 1, 0, 0},
-                            {1, 1, 0, 0},
                             {0, 0, 0, 0},
                     },
                     {
+                            {1, 1, 0, 0},
+                            {1, 1, 0, 0},
                             {0, 0, 0, 0},
+                            {0, 0, 0, 0},
+                    },
+                    {
                             {1, 1, 0, 0},
                             {1, 1, 0, 0},
+                            {0, 0, 0, 0},
                             {0, 0, 0, 0},
                     },
             },

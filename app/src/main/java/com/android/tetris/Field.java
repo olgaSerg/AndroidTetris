@@ -1,23 +1,43 @@
 package com.android.tetris;
 
+import android.graphics.Canvas;
+
+import java.util.ArrayList;
+
 public class Field {
-   public Cell[][] cells;
+    public Cell[][] cells;
 
     public Field() {
         cells = new Cell[16][10];
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < getHeight(); i++) {
+            for (int j = 0; j < getWidth(); j++) {
                 cells[i][j] = new Cell((int) 0,true);
             }
         }
+        for (int j = 0; j < 9; j++) {
+            cells[15][j] = new Cell((int) 0,false);
+        }
+//        cells[7][5] = new Cell((int) 0,false);
+    }
+
+    public int getHeight() {
+        return cells.length;
+    }
+
+    public int getWidth() {
+        return cells[0].length;
     }
 
     public Piece dropPiece(Piece piece) {
-        return piece;
+        Piece droppedPiece = piece;
+        while (canPut(droppedPiece.shiftDown())) {
+            droppedPiece = droppedPiece.shiftDown();
+        }
+        return droppedPiece;
     }
 
     public boolean isOnField(Position position) {
-        return position.row < cells.length && position.row >= 0 && position.column < cells[0].length && position.column >= 0;
+        return position.row < getHeight() && position.row >= 0 && position.column < getWidth() && position.column >= 0;
     }
 
     public boolean canPut(Piece piece) {
@@ -32,6 +52,51 @@ public class Field {
         return true;
     }
 
-//    boolean isRowEmpty() {}
-//    void draw(Canvas canvas) {}
+    boolean isRowComplete(int row) {
+        for (int j = 0; j < getWidth(); j++) {
+            if (cells[row][j].isEmpty) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void draw(Canvas canvas) {
+        for (int i = 0; i < getHeight(); i++) {
+            for (int j = 0; j < getWidth(); j++) {
+                cells[i][j].draw(new Position(i, j), canvas);
+            }
+        }
+    }
+
+    void putPiece(Piece piece) {
+        int[][] pieceArray = piece.shape.getArray();
+        for (int i = 0; i < pieceArray.length; i++) {
+            for (int j = 0; j < pieceArray[0].length; j++) {
+                if (pieceArray[i][j] == 1) {
+                    cells[i + piece.position.row][j + piece.position.column].isEmpty = false;
+                    cells[i + piece.position.row][j + piece.position.column].color = piece.shape.getColor();
+                }
+            }
+        }
+    }
+
+    public void removeRow(int row) {
+        // shifts rows above
+        for (int k = row; k >= 1; k--) {
+            for (int l = 0; l < getWidth(); l++) {
+                cells[k][l] = cells[k - 1][l];
+            }
+        }
+    }
+
+    public ArrayList<Integer> getCompleteRows() {
+        ArrayList<Integer> completeRows = new ArrayList<>();
+        for (int i = 0; i < getHeight(); i++) {
+            if (isRowComplete(i)) {
+                completeRows.add(i);
+            }
+        }
+        return completeRows;
+    }
 }

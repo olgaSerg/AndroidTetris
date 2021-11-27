@@ -7,10 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,7 +25,9 @@ class Game {
     DrawingView drawingView;
     public Timer timer;
     MediaPlayer music;
-    private GameState state;
+    public GameState state;
+    boolean isPaused = false;
+    public GameAnimator animator;
 
     public Game(Context context, DrawingView drawingView) {
         this.context = context;
@@ -72,11 +77,6 @@ class Game {
     public void clickDown() {
         if (!state.mode.equals("game")) return;
         state.piece = state.field.dropPiece(state.piece);
-        for (int i = 0; i < state.field.cells.length; i++) {
-            if (state.field.canPut(new Piece(state.piece.shape, state.piece.position.shiftDown()))) {
-                state.piece = state.piece.shiftDown();
-            }
-        }
         redraw();
     }
 
@@ -84,8 +84,6 @@ class Game {
         state.piece.rotate();
         redraw();
     }
-
-    boolean isPaused = false;
 
     public void clickPause() {
         if (!isPaused) {
@@ -104,88 +102,50 @@ class Game {
         }
     }
 
-    private void tick() {
+    public void switchToNextPiece() {
+        state.piece = state.nextPiece;
+        state.nextPiece = state.generateRandomPiece();
+
         checkGameOver();
+
+//        piece = new Piece(nextPieceShape, new Position(0, 4));
+//        nextPieceShape = generateRandomPieceShape();
+//        resetCurrentPieceLocation();
+    }
+
+    private void handlePieceLanded() {
+        ArrayList<Integer> completeRows = state.field.getCompleteRows();
+        if (completeRows.size() > 0) {
+            updateScore(completeRows.size());
+            deleteRowsWithAnimation(completeRows);
+        } else {
+            switchToNextPiece();
+        }
+    }
+
+    private void tick() {
         if (!state.mode.equals("game")) return;
-        boolean landed = putDown();
+
+        boolean landed = !state.field.canPut(state.piece.shiftDown());
+
         if (landed) {
-            state.switchToNextPiece();
+            state.field.putPiece(state.piece);
+            handlePieceLanded();
+        } else {
+            moveDown();
         }
         displayScore();
-        moveDown();
         redraw();
     }
 
-    private void deleteRowsWithAnimation() {
-        state.mode = "animation";
-        timer.cancel();
-        state.animationIndex = 0;
-        final Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (state.animationIndex > 5) {
-                    state.mode = "game";
-                    timer.cancel();
-                    startTimer();
-                    deleteCompletedRows();
-                    redraw();
-                    return;
-                }
-                for (int index = 0; index < state.completedRows.length; index++) {
-                    state.field.cells[state.completedRows[index]][5 - state.animationIndex].isEmpty = true;
-                    state.field.cells[state.completedRows[index]][5 - state.animationIndex].color = Color.WHITE;
-                    state.field.cells[state.completedRows[index]][4 + state.animationIndex].isEmpty = true;
-                    state.field.cells[state.completedRows[index]][4 + state.animationIndex].color = Color.WHITE;
-                }
-                redraw();
-                state.animationIndex++;
-            }
-        }, 50, 50);
+    private void deleteRowsWithAnimation(ArrayList<Integer> completeRows) {
+        animator = new RowsRemovalAnimator(this, completeRows);
+        animator.start();
     }
 
     private void moveDown() {
-        if (state.field.canPut(new Piece(state.piece.shape, state.piece.position.shiftDown()))) {
-            state.piece.position.row += 1;
-        }
-    }
-
-    private boolean putDown() {
-        int[][] piece = state.piece.shape.getArray();
-        if (!state.field.canPut(new Piece(state.piece.shape, state.piece.position.shiftDown()))) {
-            for (int i = 0; i < piece.length; i++) {
-                for (int j = 0; j < piece[0].length; j++) {
-                    if (piece[i][j] == 1) {
-                        state.field.cells[i + state.piece.position.row][j + state.piece.position.column].isEmpty = false;
-                        state.field.cells[i + state.piece.position.row][j + state.piece.position.column].color = state.piece.shape.getColor();
-                    }
-                }
-            }
-            rememberCompletedRowsAndStartAnimation();
-            return true;
-        }
-        return false;
-    }
-
-    private void rememberCompletedRowsAndStartAnimation() {
-        int completedRowsCount = 0;
-        int completedRowIndex = 0;
-        for (int i = 0; i < state.field.cells.length; i++) {
-            int length = 0;
-            for (int j = 0; j < state.field.cells[0].length; j++) {
-                if (!state.field.cells[i][j].isEmpty) {
-                    length++;
-                }
-                if (length == state.field.cells[0].length) {
-                    completedRowsCount++;
-                    state.completedRows[completedRowIndex] = i;
-                    completedRowIndex++;
-                }
-            }
-        }
-        deleteRowsWithAnimation();
-        if (completedRowsCount > 0) {
-            updateScore(completedRowsCount);
+        if (state.field.canPut(state.piece.shiftDown())) {
+            state.piece = state.piece.shiftDown();
         }
     }
 
@@ -221,15 +181,6 @@ class Game {
         state.score += bonus;
     }
 
-    private void deleteCompletedRows() {
-        for (int i = 0; i < state.completedRows.length; i++) {
-            for (int k = state.completedRows[i]; k >= 1; k--) {
-                for (int l = 0; l < state.field.cells[0].length; l++) {
-                    state.field.cells[k][l] = state.field.cells[k - 1][l];
-                }
-            }
-        }
-    }
 
     public void checkGameOver() {
         if (!state.field.canPut(state.piece)) {
@@ -247,92 +198,13 @@ class Game {
 
     public void draw(Canvas canvas) {
         canvas.drawARGB(0, 255, 255, 255);
-        if (state.mode.equals("game")) {
-            drawCurrentPiece(canvas);
-            drawCurrentPieceShadow(canvas);
-        }
+        state.field.draw(canvas);
+        state.piece.draw(canvas);
+
+        PieceShadow currentPieceShadow = state.piece.getShadow(state.field);
+        currentPieceShadow.draw(canvas);
+
         drawNextPiece();
-        drawField(canvas);
-    }
-
-    void drawCurrentPiece(Canvas canvas) {
-        int[][] piece = state.piece.shape.getArray();
-        for (int i = 0; i < piece.length; i++) {
-            for (int j = 0; j < piece[0].length; j++) {
-                if (piece[i][j] == 1) {
-                    drawCell(i + state.piece.position.row, j + state.piece.position.column, state.piece.shape.getColor(), canvas);
-                }
-            }
-        }
-    }
-
-    void drawCurrentPieceShadow(Canvas canvas) {
-        int shadowShift = 0;
-        while (state.field.canPut(new Piece(state.piece.shape, new Position(state.piece.position.row + shadowShift + 1, state.piece.position.column)))) {
-            shadowShift += 1;
-        }
-        int[][] piece = state.piece.shape.getArray();
-        for (int i = 0; i < piece.length; i++) {
-            for (int j = 0; j < piece[0].length; j++) {
-                if (piece[i][j] == 1) {
-                    drawCellShadow(i + state.piece.position.row + shadowShift, j + state.piece.position.column, state.piece.shape.getColor(), canvas);
-                }
-            }
-        }
-    }
-
-    void drawCellShadow(int row, int column, int color, Canvas canvas) {
-        int marginSize = 3;
-        Paint drawPaintShadow = new Paint();
-        drawPaintShadow.setColor(color);
-        drawPaintShadow.setStyle(Paint.Style.STROKE);
-        drawPaintShadow.setStrokeWidth(10);
-        canvas.drawRect(
-                column * 100 + marginSize, row * 100 + marginSize,
-                (column + 1) * 100 - marginSize - 1, (row + 1) * 100 - marginSize - 1,
-                drawPaintShadow
-        );
-    }
-
-    void drawCell(int row, int column, int color, Canvas canvas) {
-        int marginSize = 3;
-        int margin2Size = 13;
-        Paint drawPaintBlack = new Paint();
-        drawPaintBlack.setColor(Color.GRAY);
-        Paint cellPaint = new Paint();
-        cellPaint.setColor(color);
-        cellPaint.setStrokeWidth(10);
-        canvas.drawRect(
-                column * 100 + marginSize, row * 100 + marginSize,
-                (column + 1) * 100 - marginSize - 1, (row + 1) * 100 - marginSize - 1,
-                drawPaintBlack
-        );
-        canvas.drawRect(
-                column * 100 + margin2Size, row * 100 + margin2Size,
-                (column + 1) * 100 - margin2Size - 1, (row + 1) * 100 - margin2Size - 1,
-                cellPaint
-        );
-    }
-
-    void drawPiece(Piece piece, Canvas canvas) {
-        int[][] pieceArray = piece.shape.getArray();
-        for (int i = 0; i < pieceArray.length; i++) {
-            for (int j = 0; j < pieceArray[0].length; j++) {
-                if (pieceArray[i][j] == 1) {
-                    drawCell(i, j, piece.shape.getColor(), canvas);
-                }
-            }
-        }
-    }
-
-    void drawField(Canvas canvas) {
-        for (int i = 0; i < state.field.cells.length; i++) {
-            for (int j = 0; j < state.field.cells[0].length; j++) {
-                if (!state.field.cells[i][j].isEmpty) {
-                    drawCell(i, j, state.field.cells[i][j].color, canvas);
-                }
-            }
-        }
     }
 
     void drawNextPiece() {
@@ -340,9 +212,7 @@ class Game {
         Bitmap nextImageBitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
         Canvas nextImageCanvas = new Canvas(nextImageBitmap);
 
-//        Piece nextPiece = new Piece(4, 3);
-        Piece nextPiece = state.nextPiece;
-        drawPiece(nextPiece, nextImageCanvas);
+        state.nextPiece.shape.draw(nextImageCanvas);
 
         ImageView imageView = ((Activity) context).findViewById(R.id.next_piece_image);
         imageView.setImageBitmap(nextImageBitmap);

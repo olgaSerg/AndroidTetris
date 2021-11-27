@@ -2,6 +2,7 @@ package com.android.tetris;
 
 import android.graphics.Color;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 // class Cell {
@@ -9,14 +10,15 @@ import java.util.Random;
 //     boolean isEmpty;
 // }
 
+
 public class GameState {
     public Field field;
     public int score = 0;
     public Piece piece;
     public Piece nextPiece;
-    public int animationIndex;
-    public int[] completedRows = new int[20];
+//    public PieceShape nextPieceShape;
 
+//    final Position INITIAL_PIECE_POSITION = new Position(0, 4);
 
 
     public String mode = "game"; // "pause" "game-over"
@@ -33,15 +35,17 @@ public class GameState {
 
     public void initializePieces() {
         piece = generateRandomPiece();
+//        piece = new Piece(generateRandomPieceShape(), new Position(0, 4));
+
         nextPiece = generateRandomPiece();
 //        resetCurrentPieceLocation();
     }
 
-    public void switchToNextPiece() {
-        piece = nextPiece;
-        nextPiece = generateRandomPiece();
-//        resetCurrentPieceLocation();
-    }
+
+
+//    public PieceShape generateRandomPieceShape() {
+//
+//    }
 
     public Piece generateRandomPiece() {
         Random rnd = new Random();
