@@ -1,7 +1,0 @@
-<application>
-  <component name="GithubAccounts">
-    <account id="8d5339f5-9968-4352-807b-4da8cf21b74b" name="olgaSerg">
-      <server useHttp="false" host="github.com" />
-    </account>
-  </component>
-</application>
