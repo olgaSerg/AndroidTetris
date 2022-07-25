@@ -8,9 +8,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-
-   public Game game;
-   public static Context appContext;
+    public Game game;
+    public static Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
         game.start();
     }
 
-
-    public void clickRight(View view) { game.clickRight(); }
+    public void clickRight(View view) {
+        game.clickRight();
+    }
 
     public void clickLeft(View view) {
         game.clickLeft();
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickPause(View view) {
-            game.clickPause();
-        }
+        game.clickPause();
+    }
 }
 

@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     android:background="#2F4F4F"
+    android:orientation="horizontal"
     tools:context=".MainActivity">
 
     <TableLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3.5"
-        android:orientation="vertical"
-        android:background="#2F4F4F">
+        android:background="#2F4F4F"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -25,9 +24,9 @@
                 android:id="@+id/drawing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="7dp"
                 android:layout_marginStart="7dp"
-                />
+                android:layout_marginTop="7dp"
+                android:onClick="onClick" />
 
             <TextView
                 android:id="@+id/game_over_view"
@@ -35,7 +34,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="70dp"
                 android:layout_marginTop="280dp"
-                android:layout_marginBottom="30dp"
                 android:text="GAME OVER"
                 android:textColor="@android:color/black"
                 android:textSize="32sp"
@@ -49,43 +47,38 @@
             android:layout_height="0dp"
             android:layout_marginStart="20dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            android:background="#2F4F4F">
+            android:background="#2F4F4F"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/imageButton"
                 android:layout_width="78dp"
                 android:layout_height="70dp"
-                android:onClick="clickRotation"
                 android:background="@drawable/rotate"
-                />
+                android:onClick="clickRotation" />
 
             <ImageButton
                 android:id="@+id/button_left"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="clickLeft"
-                android:background="@drawable/left" />
+                android:background="@drawable/left"
+                android:onClick="clickLeft" />
 
             <ImageButton
                 android:id="@+id/button_down"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="clickDown"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/down" />
+                android:background="@drawable/down"
+                android:onClick="clickDown" />
 
             <ImageButton
                 android:id="@+id/button_right"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:onClick="clickRight"
-                android:background="@drawable/right" />
-
-
+                android:background="@drawable/right"
+                android:onClick="clickRight" />
         </LinearLayout>
-
-
     </TableLayout>
 
     <TableLayout
@@ -100,8 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="50dp"
-             />
+            android:layout_marginTop="50dp" />
 
         <TextView
             android:id="@+id/game_score"
@@ -115,8 +107,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:onClick="clickPause"
-            android:text="Pause"
-            />
+            android:text="Pause" />
     </TableLayout>
 
 </LinearLayout>

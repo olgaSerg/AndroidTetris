@@ -4,21 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.media.MediaPlayer;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static java.security.AccessController.getContext;
-
 
 class Game {
     Context context;
@@ -33,10 +26,6 @@ class Game {
         this.context = context;
         this.state = new GameState();
         this.drawingView = drawingView;
-
-//      for (int j = 1; j < 10; j++) {
-//          state.field[15][j] = new Cell((int) 0,false);
-//      }
     }
 
     public void start() {
@@ -89,7 +78,7 @@ class Game {
         if (!isPaused) {
             isPaused = true;
             timer.cancel();
-            Button btnPause =((MainActivity) context).findViewById(R.id.button_pause);
+            Button btnPause = ((MainActivity) context).findViewById(R.id.button_pause);
             btnPause.setText("Continue");
             btnPause.setTextSize(11);
             music.pause();
@@ -107,10 +96,6 @@ class Game {
         state.nextPiece = state.generateRandomPiece();
 
         checkGameOver();
-
-//        piece = new Piece(nextPieceShape, new Position(0, 4));
-//        nextPieceShape = generateRandomPieceShape();
-//        resetCurrentPieceLocation();
     }
 
     private void handlePieceLanded() {
@@ -150,20 +135,13 @@ class Game {
     }
 
     private void displayScore() {
-        ((Activity) context).runOnUiThread(new Runnable() {
-                                                    public void run() {
-                                                        TextView scoreView = ((Activity) context).findViewById(R.id.game_score);
-                                                        // TODO: переписать на байндинг, по аналогии с:
-                                                        // https://startandroid.ru/ru/courses/architecture-components/27-course/architecture-components/552-urok-19-android-data-binding-vozmozhnosti.html
-                                                        // <TextView
-                                                        //           android:layout_width="wrap_content"
-                                                        //           android:layout_height="wrap_content"
-                                                        //           android:text="@{employee.name}" />
-
-
-                                                        scoreView.setText(String.valueOf(state.score));
-                                                    }
-                                                }
+        ((Activity) context).runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        TextView scoreView = ((Activity) context).findViewById(R.id.game_score);
+                        scoreView.setText(String.valueOf(state.score));
+                    }
+                }
         );
     }
 
@@ -187,10 +165,10 @@ class Game {
             state.mode = "game-over";
             ((Activity) context).runOnUiThread(new Runnable() {
                 public void run() {
-                View view = ((Activity) context).findViewById(R.id.game_over_view);
-                view.setVisibility(View.VISIBLE);
-                music.stop();
-                redraw();
+                    View view = ((Activity) context).findViewById(R.id.game_over_view);
+                    view.setVisibility(View.VISIBLE);
+                    music.stop();
+                    redraw();
                 }
             });
         }
@@ -208,7 +186,6 @@ class Game {
     }
 
     void drawNextPiece() {
-        // runOnUithread ...
         Bitmap nextImageBitmap = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
         Canvas nextImageCanvas = new Canvas(nextImageBitmap);
 

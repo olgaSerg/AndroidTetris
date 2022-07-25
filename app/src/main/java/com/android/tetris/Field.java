@@ -11,13 +11,9 @@ public class Field {
         cells = new Cell[16][10];
         for (int i = 0; i < getHeight(); i++) {
             for (int j = 0; j < getWidth(); j++) {
-                cells[i][j] = new Cell((int) 0,true);
+                cells[i][j] = new Cell(0, true);
             }
         }
-        for (int j = 0; j < 9; j++) {
-            cells[15][j] = new Cell((int) 0,false);
-        }
-//        cells[7][5] = new Cell((int) 0,false);
     }
 
     public int getHeight() {
@@ -82,7 +78,6 @@ public class Field {
     }
 
     public void removeRow(int row) {
-        // shifts rows above
         for (int k = row; k >= 1; k--) {
             for (int l = 0; l < getWidth(); l++) {
                 cells[k][l] = cells[k - 1][l];

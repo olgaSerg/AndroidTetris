@@ -1,4 +1,5 @@
 package com.android.tetris;
+
 import android.graphics.Canvas;
 
 
@@ -10,7 +11,6 @@ public class Piece {
         this.shape = shape;
         this.position = position;
     }
-
 
     public Piece rotate() {
         return new Piece(shape.rotate(), position);
@@ -26,7 +26,6 @@ public class Piece {
             shadowShift += 1;
         }
         return new PieceShadow(shape, new Position(position.row + shadowShift, position.column));
-//        return new PieceShadow(shape, position.shiftBy(shadowShift, 0));
     }
 
     Piece shiftBy(int rowShift, int columnShift) {
@@ -45,9 +44,3 @@ public class Piece {
         return shiftBy(1, 0);
     }
 }
-
-
-
-//        Position position = new Position(0, 4);
-//        PieceShape shape = new PieceShape(1, 3, Color.BLACK);
-//        Piece p = new Piece(shape, position);
